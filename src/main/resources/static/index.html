@@ -131,6 +131,7 @@
             <td><button type="button" class="btnDel">🗑</button></td>
           </tr>
         `
+        html += tr;
       } )
 
       html    += '</table>';
@@ -150,6 +151,43 @@
       datalist_display( datalist );
 
 
+    }
+
+    // requestJson()
+    async function requestJson( url, options = {} ) {
+      const response = await fetch(url, options);
+      const text     = await response.json();
+      let   data     = null;
+
+      // 조회한 결과가 있을 때 실행
+      if( text ) {
+        try {
+          data = JSON.parse(text); // text(JSON 문자열) -> Javascript 객체 변환
+        } catch (err) {
+          data = text;
+        }
+      }
+
+      // 조회 status code ok(200)이 아니면
+      if (!response.ok) {
+        throw new Error(response.error);
+      }
+      return data;
+    }
+
+    // window.onload
+    window.onload = function () {
+      // 검색 버튼을 클릭했을 때
+      const btnOkEl = document.getElementById('btnOk');
+      btnOkEl.onclick = async function () {
+        try {
+          await getUsers();
+        } catch(err) {
+          console.log(err);
+          alert(err);
+        }
+      }
+      btnOkEl.click()
     }
 
   </script>
