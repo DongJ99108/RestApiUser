@@ -45,59 +45,114 @@
     </style>
 </head>
 <body>
-<main>
-  <h2>회원 REST API Test</h2>
+  <main>
+    <h2>회원 REST API Test</h2>
 
-  <form id="form1">
-    <table>
+    <form id="form1">
+      <table class="form-table">
 
-      <tr>
-        <td>아이디</td>
-        <td><input type="text" id="userid" required /></td>
-      </tr>
-      <tr>
-        <td>암호</td>
-        <td><input type="text" id="passwd" required /></td>
-      </tr>
-      <tr>
-        <td>이름</td>
-        <td><input type="text" id="username" required /></td>
-      </tr>
-      <tr>
-        <td>이메일</td>
-        <td><input type="text" id="email" /></td>
-      </tr>
-      <tr>
-        <td>가입일</td>
-        <td><input type="text" id="indate" readonly /></td>
-      </tr>
-      <tr>
-        <td colspan="2">
-          <a href="#" id="btnInsert" class="btn btn-primary btn-sm">추가</a>
-          <a href="#" id="btnUpdate" class="btn btn-warning btn-sm">수정</a>
-          <a href="#" id="btnDelete" class="btn btn-danger  btn-sm">삭제</a>
-          <input type="button" id="btnClear" class="btn btn-info btn-sm" value="Clear" />
-        </td>
-      </tr>
+        <tr>
+          <td>아이디</td>
+          <td><input type="text" id="userid" required /></td>
+        </tr>
+        <tr>
+          <td>암호</td>
+          <td><input type="text" id="passwd" required /></td>
+        </tr>
+        <tr>
+          <td>이름</td>
+          <td><input type="text" id="username" required /></td>
+        </tr>
+        <tr>
+          <td>이메일</td>
+          <td><input type="text" id="email" /></td>
+        </tr>
+        <tr>
+          <td>가입일</td>
+          <td><input type="text" id="indate" readonly /></td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <a href="#" id="btnInsert" class="btn btn-primary btn-sm">추가</a>
+            <a href="#" id="btnUpdate" class="btn btn-warning btn-sm">수정</a>
+            <a href="#" id="btnDelete" class="btn btn-danger  btn-sm">삭제</a>
+            <input type="button" id="btnClear" class="btn btn-info btn-sm" value="Clear" />
+          </td>
+        </tr>
 
-    </table>
-  </form>
+      </table>
+    </form>
 
-  <div id="message" class="message"></div>
-  <hr>
-  <div>
-      아이디<input type="text" id="text" placeholder="검색어" />
-      <button id="btnOk" class="btn btn-secondary btn-sm">검색</button>
-  </div>
+    <div id="message" class="message"></div>
+    <hr>
+    <div>
+        아이디<input type="text" id="text" placeholder="검색어" />
+        <button id="btnOk" class="btn btn-secondary btn-sm">검색</button>
+    </div>
 
-  <div id="div1"></div>
+    <div id="div1"></div>
 
-</main>
+  </main>
 
-<!-- ----------------------------------------------------------------------------------------------- -->
-<script>
-  const API_URL = '/api/users'; // 기본 api 주소
-</script>
+  <!-- ----------------------------------------------------------------------------------------------- -->
+  <script>
+    const API_URL = '/api/users'; // 기본 api 주소
+
+    // header 문자열
+    function table_header() {
+      return `
+        <tr>
+          <th>아이디</th>
+          <th>이름</th>
+          <th>이메일</th>
+          <th>가입일</th>
+          <th>삭제</th>
+        </tr>
+      `;
+    }
+
+    // 조회한 datalist 출력
+    function datalist_display(datalist) {
+      let html = '<table id="list" class="table table-striped">';
+      html    += table_header();
+
+      datalist.forEach( user => {
+        const userid   =  user.userid;
+        const username =  user.username;
+        const email    =  user.email;
+        const indate   =  user.indate;
+
+        let tr = `
+          <tr>
+            <td>${userid}</td>
+            <td>${username}</td>
+            <td>${email}</td>
+            <td>${indate}</td>
+            <td><button type="button" class="btnDel">🗑</button></td>
+          </tr>
+        `
+      } )
+
+      html    += '</table>';
+
+      const div1El = document.getElementById('div1');
+      div1El.innerHTML = html;
+    }
+
+    // data 조회 API_URL = /api/users
+    // GET http://localhost:8080/api/users
+    // GET http://localhost:8080/api/users?keyword=user
+    async function getUsers() {
+      const keywordEl = document.getElementById('text');
+      const keyword   = keywordEl.value.trim();
+      const url       = (keyword) ? `${API_URL}?keyword=${encodeURIComponent(keyword)}` : API_URL;
+      const datalist  = await requestJson(url);
+      datalist_display( datalist );
+
+
+    }
+
+  </script>
 
 </body>
 </html>
