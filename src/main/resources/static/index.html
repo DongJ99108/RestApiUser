@@ -172,7 +172,25 @@
       const datalist  = await requestJson(url);
       datalist_display( datalist );
 
+    }
 
+    //data_insert()
+    async function data_insert() {
+      const options = {
+        method: 'POST',
+        body: JSON.stringify({
+          userid: 'foo',
+          passwd: 'bar',
+          username: 'foobar',
+          email: 'foo@bar.com'
+        }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+        }
+      }
+      await requestJson(API_URL, options);
+      text_clear()
+      await loadUsers();
     }
 
     // requestJson()
@@ -225,7 +243,8 @@
       div1El.addEventListener('dblclick', event => {
         // dblclick 자리에다가 mouseover라는 명령어를 넣으면 마우스 움직일 때 마다 내용이 달라짐
         // console.log(event.target); // td
-        let tds = event.target.parentElement.children;
+        // let tds = event.target.parentElement.children;
+        let tds = event.target.closest('tr').children;
         console.log(tds);
         // HTMLCollection(5) [td, td, td, td, td] : tds.forEach() 로 출력안됨 > tag collection
         const useridEl   = document.getElementById('userid');
@@ -234,12 +253,14 @@
         const emailEl    = document.getElementById('email');
         const indateEl   = document.getElementById('indate');
         Array.from(tds).forEach( (td, i) => {
+          if (td.tagName !== "TD") return;
           console.dir(td)
           switch (i) {
             case 0: useridEl.value   = td.innerHTML; break;
             case 1: usernameEl.value = td.innerHTML; break;
             case 2: emailEl.value    = td.innerHTML; break;
             case 3: indateEl.value   = td.innerHTML; break;
+            default: break;
           }
         }) // 이건 작동함
         /*
@@ -279,10 +300,21 @@
 
 
       // -----------------------------------------------
+      // a tag 를 버튼으로 사용하려면 기본 이벤트(href로 이동)를 무력화하고 사용해야한다.
       // 추가 버튼 클릭
       const btnInsertEl = document.getElementById('btnInsert');
-      btnInsertEl.addEventListener('click', async function() {
-        alert('추가')
+      btnInsertEl.addEventListener('click', async function( event ) {
+        // alert('추가')
+        console.log(event);
+        event.preventDefault(); // 기본 이벤트 취소
+        event.stopPropagation();
+
+        try {
+          await data_insert();
+        } catch (err) {
+            console.log(err);
+            alert('오류 발생');
+        }
       })
 
       // -----------------------------------------------
