@@ -3,6 +3,7 @@ package com.example.restapiuser.controller;
 import com.example.restapiuser.dto.DeleteResponse;
 import com.example.restapiuser.dto.UserCreateRequest;
 import com.example.restapiuser.dto.UserResponse;
+import com.example.restapiuser.dto.UserUpdateRequest;
 import com.example.restapiuser.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -58,6 +59,16 @@ public class UserRestController {
     public DeleteResponse delete(@PathVariable String userid) {
         userService.deleteUser( userid ); // deleteUser 함수를 만들어서 삭제에 필요한 정보인 userid 제공(Service에서 작업)
         return new DeleteResponse(userid, true);
+    }
+
+    // 회원 수정 UPDATE
+    // PATCH http://localhost:8080/api/users/test01
+    @PatchMapping("/{userid}")
+    public UserResponse update(
+        @PathVariable("userid") String userid,
+        @Valid @RequestBody UserUpdateRequest request
+    ) {
+        return userService.updateUser( userid, request );
     }
 
 }

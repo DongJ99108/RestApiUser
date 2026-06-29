@@ -2,6 +2,7 @@ package com.example.restapiuser.service;
 
 import com.example.restapiuser.dto.UserCreateRequest;
 import com.example.restapiuser.dto.UserResponse;
+import com.example.restapiuser.dto.UserUpdateRequest;
 import com.example.restapiuser.entity.UserEntity;
 import com.example.restapiuser.exception.ApiException;
 import com.example.restapiuser.repository.UserRepository;
@@ -69,6 +70,16 @@ public class UserService {
         return userRepository.findById(userid)
                 .orElseThrow( () -> new ApiException( HttpStatus.NOT_FOUND,
                         "사용자를 찾을 수 없습니다." + userid ) );
+    }
+
+    public UserResponse updateUser(String userid, @Valid UserUpdateRequest request) {
+        UserEntity user = getUserEntity(userid);
+        if ( request.passwd() == null && request.passwd().isBlank() ) {
+            user.setPassword(request.passwd());
+        }
+        user.setUsername(request.username());
+        user.setEmail(request.email());
+        return UserResponse.from( userRepository.save(user) );
     }
 }
 
