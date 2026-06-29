@@ -38,10 +38,12 @@ public class UserService {
                 .toList(); // list.stream() -> ArrayList 로 변경
     }
 
+    // 회원 추가
     @Transactional
     public UserResponse createUser(@Valid UserCreateRequest request) {
         if (userRepository.existsById( request.userid() )) {
-            throw new ApiException( HttpStatus.CONFLICT, "이미 존재하는 아이디입니다." + request.userid() );
+            throw new ApiException( HttpStatus.CONFLICT,
+                    "이미 존재하는 아이디입니다." + request.userid() );
         };
         UserEntity user = new UserEntity(
                 request.userid(),
@@ -53,4 +55,31 @@ public class UserService {
         UserEntity savedUser = userRepository.save(user);
         return UserResponse.from(savedUser);
     }
+
+    // Controller 에서 넘어옴
+    // 회원 삭제
+    @Transactional
+    public void deleteUser(String userid) {
+        UserEntity user = getUserEntity(userid);
+        userRepository.delete(user); // 삭제
+    }
+
+    // userid 로 검색
+    private UserEntity getUserEntity(String userid) {
+        return userRepository.findById(userid)
+                .orElseThrow( () -> new ApiException( HttpStatus.NOT_FOUND,
+                        "사용자를 찾을 수 없습니다." + userid ) );
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+

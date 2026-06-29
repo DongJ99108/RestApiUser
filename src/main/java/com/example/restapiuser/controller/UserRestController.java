@@ -1,5 +1,6 @@
 package com.example.restapiuser.controller;
 
+import com.example.restapiuser.dto.DeleteResponse;
 import com.example.restapiuser.dto.UserCreateRequest;
 import com.example.restapiuser.dto.UserResponse;
 import com.example.restapiuser.service.UserService;
@@ -49,6 +50,14 @@ public class UserRestController {
         // .body(response) : 생성된 사용자 정보를 JSON으로 응답
         */
 
+    }
+
+    // 회원삭제 DELETE DELETE(SQL)
+    // DELETE http://localhost:8080/api/users/test1
+    @DeleteMapping("/{userid}")
+    public DeleteResponse delete(@PathVariable String userid) {
+        userService.deleteUser( userid ); // deleteUser 함수를 만들어서 삭제에 필요한 정보인 userid 제공(Service에서 작업)
+        return new DeleteResponse(userid, true);
     }
 
 }
